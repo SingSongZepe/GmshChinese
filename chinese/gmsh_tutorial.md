@@ -24,7 +24,7 @@
 
 - t3 挤压网格、ONELAB 参数、选项
 
-- t4 内置功能、表面孔洞、注释、实体颜色
+- t4 内置函数、表面孔洞、注释、实体颜色
 
 - t5 网格尺寸、宏、环、体积中的孔
 
@@ -370,7 +370,7 @@ Physical Volume("The volume", 1) = {129,130};
 
 # 2.3 t3 挤压网格、ONELAB 参数、选项
 
-参见[t3.geo](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/t3.geo). 或者对于C++（[t3.cpp](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/c++/t3.cpp)），C（[t3.c](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/c/t2.c)），Python（[t3.py](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/python/t3py)），Julia（[t3.jl](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/julia/t3.jl)）和Fortran（[t3.f90](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/fortran/t3.f90)）。
+参见[t3.geo](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/t3.geo). 或者对于C++（[t3.cpp](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/c++/t3.cpp)），C（[t3.c](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/c/t3.c)），Python（[t3.py](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/python/t3.py)），Julia（[t3.jl](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/julia/t3.jl)）和Fortran（[t3.f90](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/fortran/t3.f90)）。
 
 ![](./res/2/t3_1.png)
 
@@ -474,4 +474,14 @@ Geometry.Color.Surfaces = Geometry.Color.Points;
 // `File->Export->Gmsh Options'. To associate the current options with the
 // current file use `File->Save Model Options'. To save the current options for
 // all future Gmsh sessions use `File->Save Options As Default'.
+```
+
+# 2.4 t4 内置函数、表面孔洞、注释、实体颜色
+
+参见[t4.geo](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/t4.geo). 或者对于C++（[t4.cpp](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/c++/t4.cpp)），C（[t4.c](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/c/t4.c)），Python（[t4.py](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/python/t4.py)），Julia（[t4.jl](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/julia/t4.jl)）和Fortran（[t4.f90](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/tutorials/fortran/t4.f90)）。
+
+![](./res/2/t4_1.png)
+
+```GmshScriptingLanguage
+
 ```
