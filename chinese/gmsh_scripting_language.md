@@ -102,7 +102,122 @@ EndFor
 等同于
 
 ```GmshScriptingLanguage
-
+x_1 = 1;
+x_2 = 2;
+x_3 = 3;
 ```
+
+方括号`[]`允许从列表中提取一项（也可以使用圆括号代替方括号）。井号`#`允许获取列表的长度。运算符*一元左运算符*、*一元右运算符*、*二元运算符*、*三元左运算符*和*三元右运算符*在[运算符](https://gmsh.info/doc/texinfo/gmsh.html#Operators)中定义。有关内置函数的定义，参见[内置函数](https://gmsh.info/doc/texinfo/gmsh.html#Built_002din-functions)。各种*数字选项*列在[Gmsh选项](https://gmsh.info/doc/texinfo/gmsh.html#Gmsh-options)。
+
+- `Find` 搜索第二个表达式中出现的第一个表达式（两者都可以是列表）。
+
+- `StrFind`搜索第一个字符串表达式中出现的第二个字符串表达式。
+
+- `StrCmp`比较两个字符串（根据第一个字符串大于、等于或小于第二个字符串返回大于、等于或小于0的整数）。
+
+- `StrLen`返回字符串长度。
+
+- `TextAttributes`为文本字符串创建属性。
+
+- `Exists`检查具有给定的名称的变量是否存在（即，之前是否定义过）。
+
+- `FileExists`检查具有给定的名称的文件是否存在。
+
+- `StringToName`根据提供的字符串创建一个名称。
+
+- `GetNumber`允许获取ONELAB变量的值（第二个可选参数是在变量不存在时返回的默认值）。
+
+- `GetValue`允许互动地向用户请求输入值（第二个参数是非互动模式下返回的默认值）。例如，在输入文件中插入`GetValue("Value of parameter alpha?", 5.76)`将向用户查询某个参数`alpha`的值，假设默认值为`5.76`。如果已经设置选项`General.NoPopup`（参见[Gmsh选项](https://gmsh.info/doc/texinfo/gmsh.html#General-options)），将不会询问并且自动使用默认值。
+
+- `DefinNumber`允许定义ONELAB变量（append： in-line），作为第一个参数给出的*表达式*是默认值；后面是各种ONELAB 选项。有关更多信息，请参阅 ONELAB 教程 wiki。
+
+
+
+表达式列表经常被使用，并且如下定义：
+
+```GmshScriptingLanguage
+expression-list:
+  expression-list-item <, expression-list-item> …
+```
+
+其中
+
+```GmshScriptingLanguage
+expression-list-item:
+  expression |
+  expression : expression |
+  expression : expression : expression |
+  string [ ] |  string ( ) |
+  List [ string ] |
+  List [ expression-list-item ] |
+  List [ { expression-list } ] |
+  Unique [ expression-list-item ] |
+  Abs [ expression-list-item ] |
+  ListFromFile [ expression-char ] |
+  LinSpace[ expression, expression, expression ] |
+  LogSpace[ expression, expression, expression ] |
+  string [ { expression-list } ] |
+  Point { expression } |
+  transform |
+  extrude |
+  boolean |
+  Point|Curve|Surface|Volume In BoundingBox { expression-list } |
+  BoundingBox Point|Curve|Surface|Volume { expression-list } |
+  Mass Curve|Surface|Volume { expression } |
+  CenterOfMass Curve|Surface|Volume { expression } |
+  MatrixOfInertia Curve|Surface|Volume { expression } |
+  Point { expression } |
+  Physical Point|Curve|Surface|Volume { expression-list } |
+  <Physical> Point|Curve|Surface|Volume { : } |
+```
+
+最后一个定义中第二种情况允许创建一个列表，包含两个表达式之间的以单位递增步长的数字范围。第三种情况也允许创建一个列表，包含两个表达式之间的数字范围，但正负递增步长等于第三个表达式。第四种、五种和六种情况允许引用表达式列表（也可以使用圆括号代替方括号）。
+
+
+
+- `Unique` 对列表中的条目进行排序并删除所有重复项。
+
+- `Abs` 取列表中所有条目的绝对值。
+
+- `ListFromFile` 从文件读取数字列表
+
+- `ListSpace` 和 `LogSpace` 使用线性或对数间距构建列表。
+
+
+
+接下来的两种情况允许引用表达式子列表（其元素对应于*表达式列表*提供的索引）。接下来的情况允许检索通过几何变换、挤压和布尔运算创建的实体的索引（参见[变换](https://gmsh.info/doc/texinfo/gmsh.html#Transformations)、[挤压](https://gmsh.info/doc/texinfo/gmsh.html#Extrusions)和[布尔运算](https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations)）。
+
+接下来的两种情况允许检索给定边框中的实体，或得到给定实体的边框（边框被指定为（X最小值，Y最小值，Z最小值，X最大值，Y最大值，Z最大值））。请注意，坐标的顺序和场景的`BoundingBox`命令中的不同：参见[其他常规命令](https://gmsh.info/doc/texinfo/gmsh.html#Other-general-commands)。最后一种情况允许检索实体的质量、质心或惯性矩阵、给定集合点的坐标（参见[Points](https://gmsh.info/doc/texinfo/gmsh.html#Points)）、组成物理组的基本实体和模型中所有（物理或基本）点、曲线、表面或体积。这些操作都会出发CAD模型与内部Gmsh模型的同步。
+
+要了解此类表达式的实际用途，请查看[Gmsh教程](./gmsh_tutoral.md)中的前几个示例。请注意，为了简化语法，如果*表达式列表*仅包含单个项目，您可以省略包括住*表达式列表*的花括号`{}`。另外请注意，可以在花括号*表达式列表*前添加一个负号，以改变所有*表达式列表项*的符号。
+
+对于某些命令，在列表中指定所有可能的表达式是有意义的。可以通过*表达式列表或全部*，定义如下：
+
+```GmshScriptingLanguage
+expression-list-or-all:
+  expression-list | :
+```
+
+”全部“的意思依赖于上下文。例如，`Curve {:}`将会得到模型中所有存在的曲线的id，而`Surface {:}`会得到所有表面的id。
+
+
+
+### 5.1.3 字符串表达式
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
