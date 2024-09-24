@@ -13,11 +13,11 @@
 3. [Gmsh图形用户界面](./gmsh_graphical_user_interface.md)
 4. [Gmsh命令行界面](./gmsh_commandline_interface.md)
 5. [Gmsh脚本语言](./gmsh_scripting_language.md)
-6. Gmsh应用程序接口
-7. [Gmsh选项](./gmsh_options)
-8. Gmsh网格尺寸范围
-9. Gmsh插件
-10. Gmsh文件格式
+6. [Gmsh应用程序接口](./gmsh_application_programming_interface.md)
+7. [Gmsh选项](./gmsh_options.md)
+8. [Gmsh网格尺寸范围](gmsh_mesh_size_fields.md)
+9. [Gmsh插件](./gmsh_plugins.md)
+10. [Gmsh文件格式](./gmsh_file_formats.md)
 
 附录A 编译源代码
 附录B 开发者信息

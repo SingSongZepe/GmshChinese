@@ -131,8 +131,6 @@ x_3 = 3;
 
 - `DefinNumber`允许定义ONELAB变量（append： in-line），作为第一个参数给出的*表达式*是默认值；后面是各种ONELAB 选项。有关更多信息，请参阅 ONELAB 教程 wiki。
 
-
-
 表达式列表经常被使用，并且如下定义：
 
 ```GmshScriptingLanguage
@@ -173,8 +171,6 @@ expression-list-item:
 
 最后一个定义中第二种情况允许创建一个列表，包含两个表达式之间的以单位递增步长的数字范围。第三种情况也允许创建一个列表，包含两个表达式之间的数字范围，但正负递增步长等于第三个表达式。第四种、五种和六种情况允许引用表达式列表（也可以使用圆括号代替方括号）。
 
-
-
 - `Unique` 对列表中的条目进行排序并删除所有重复项。
 
 - `Abs` 取列表中所有条目的绝对值。
@@ -182,8 +178,6 @@ expression-list-item:
 - `ListFromFile` 从文件读取数字列表
 
 - `ListSpace` 和 `LogSpace` 使用线性或对数间距构建列表。
-
-
 
 接下来的两种情况允许引用表达式子列表（其元素对应于*表达式列表*提供的索引）。接下来的情况允许检索通过几何变换、挤压和布尔运算创建的实体的索引（参见[变换](https://gmsh.info/doc/texinfo/gmsh.html#Transformations)、[挤压](https://gmsh.info/doc/texinfo/gmsh.html#Extrusions)和[布尔运算](https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations)）。
 
@@ -200,24 +194,227 @@ expression-list-or-all:
 
 ”全部“的意思依赖于上下文。例如，`Curve {:}`将会得到模型中所有存在的曲线的id，而`Surface {:}`会得到所有表面的id。
 
-
-
 ### 5.1.3 字符串表达式
 
+字符串表达式定义如下：
 
+```GmshScriptingLanguage
+string-expression:
+  "string" |
+  string | string[ expression ] |
+  Today | OnelabAction | GmshExecutableName |
+  CurrentDirectory | CurrentDir | CurrentFileName
+  StrPrefix ( string-expression ) |
+  StrRelative ( string-expression ) |
+  StrCat ( string-expression <,…> ) |
+  Str ( string-expression <,…> ) |
+  StrChoice ( expression, string-expression, string-expression ) |
+  StrSub( string-expression, expression, expression ) |
+  StrSub( string-expression, expression ) |
+  UpperCase ( string-expression ) |
+  AbsolutePath ( string-expression ) |
+  DirName ( string-expression ) |
+  Sprintf ( string-expression , expression-list ) |
+  Sprintf ( string-expression ) |
+  Sprintf ( string-option ) |
+  GetEnv ( string-expression ) |
+  GetString ( string-expression <,string-expression>) |
+  GetStringValue ( string-expression , string-expression ) |
+  StrReplace ( string-expression , string-expression , string-expression )
+  NameToString ( string ) | N2S ( string ) |
+  <Physical> Point|Curve|Surface|Volume { expression } |
+  DefineString(string-expression, onelab-options)
+```
 
+- `Today`返回当前日期。
 
+- `OnelabAction`返回当前ONELAB动作（例如，`check` 或 `compute`）。
 
+- `GmshExecutableName` 返回Gmsh可执行文件的完整路径。
 
+- `CurrentDirectory` 或 `CurrentDir` 或 `CurrentFileName` 返回文件夹和当前在解释的脚本文件名。
 
+- `StrPrefix`和 `StrRelative` 取出给定文件名的前缀（例如，去除拓展名）或相对路径。
 
+- `StrCat` 和 `Str` 连接字符串表达式（`Str` 在除去最后的每个字符串末尾添加换行字符）。
 
+- `StrChoice` 根据*表达式*的值返回第一个或第二个*字符串表达式*。
 
+- `StrSub` 返回从第一个*表达式*给出的字符位置开始，跨过第二个*表达式*给出的字符数或直到字符串末尾（先出现者为准；如果未提供第二个表达式，则始终返回后者）的部分字符串。
 
+- `UpperCase` 转换*字符串表达式*到大写。
 
+- `AbsolutePath` 返回文件的绝对路径。
 
+- `DirName` 返回文件的目录。
 
+- `Sprintf` 等价于C语言的 `Sprintf` 函数（其中*字符串表达式*是一个可以包含浮点格式字符的格式字符串：%e, %g, etc.）。各种*字符串选项*列在[Gmsh选项](https://gmsh.info/doc/texinfo/gmsh.html#Gmsh-options)。
 
+- `GetEnvThe` 取得操作系统的环境变量的值。
 
+- `GetString` 允许得到ONELAB字符串的值（第二个可选参数是变量不存在时候返回的默认值）。
 
+- `GetStringValue` 互动式地请求用户输入一个值（第二个参数是非互动模式下将会用到的值）。
 
+- `StrReplace` 的参数是：输入字符串，旧子字符串，新子字符串（方括号可以用来代替`Str` 和 `Sprintf` 中的圆括号）。
+
+- `Physical Point`，等，或 `Point`， 检索物理或基本实体的名称（如果有）。
+
+- `NameToString` 转化一个变量名到字符串。
+
+- `DefineString` 允许定义ONELAB变量（in-line）。作为第一个参数给出的*字符串表达式*是默认；后面是各种ONELAB选项。参见[ONELAB教程百科](https://gitlab.onelab.info/doc/tutorials/wikis/ONELAB-syntax-for-Gmsh-and-GetDP)以获取更多信息。
+
+字符串表达式常常被用来指定非数字选项和输入/输出文件名。参见[t8](https://gmsh.info/doc/texinfo/gmsh.html#t8)，内含动画脚本中对*字符串表达式*的一种有趣的用法。
+
+字符串列表定义如下：
+
+```GmshScriptingLanguage
+string-expression-list:
+  string-expression <,…>
+```
+
+### 5.1.4 颜色表达式
+
+颜色表达式是固定长度的括号表达式列表和字符串的混合：
+
+```GmshScriptingLanguage
+color-expression:
+  string-expression |
+  { expression, expression, expression } |
+  { expression, expression, expression, expression } |
+  color-option
+```
+
+第一种情况允许使用X Windows名称来指代颜色，例如，`Red`, `SpringGreen`, `LavenderBlush3`, ... （参见[src/common/Colors.h](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/src/common/Colors.h)的源代码的完整列表）。
+
+第二种情况允许通过三个表达式指定红绿蓝组分来定义颜色。
+
+第三种情况允许通过红绿蓝组分和alpha通道来定义颜色。
+
+最后一种情况允许将*颜色选项*作为*颜色表达式*来使用。各种*颜色选项*列在[Gmsh选项](https://gmsh.info/doc/texinfo/gmsh.html#Gmsh-options)中。
+
+参见[t3](https://gmsh.info/doc/texinfo/gmsh.html#t3)，内含使用颜色表达的示例。
+
+- 操作符
+
+- 内置函数
+
+- 用户自定义宏
+
+- 循环和条件
+
+- 其他常规命令
+
+### 5.1.5 操作符
+
+Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，二元和三元操作符的列表。
+
+*一元左操作符*
+
+- \-
+
+> 一元负号
+
+- !
+
+> 逻辑非
+
+*一元右操作符*
+
+- ++ 
+
+> 后自增
+
+- -- 
+
+> 后自减
+
+*二元操作符*
+
+- ^
+
+> 指数运算
+
+- *
+
+> 乘法运算
+
+- /
+
+> 除法运算
+
+- %
+
+> 取模
+
+- \+
+
+> 加法运算
+
+- \-
+
+> 减法运算
+
+- ==
+
+> 等于
+
+- !=
+
+> 不等
+
+- \>
+
+> 大于
+
+- \>=
+
+> 大于或等于
+
+- < 
+
+> 小于
+
+- <=
+
+> 小于或等于
+
+- &&
+
+> 逻辑与
+
+- ||
+
+> 逻辑或。（注意：逻辑或总是隐含两个操作数的评估。不同于C或C++，第一个操作数为真时第二个`||的操作数将不被评估）。
+
+*三元左运算符*
+
+- ?
+
+*三元右运算符*
+
+- : 唯一的三元运算符，由*三元左运算符*和*三元右运算符*构成，第一个参数非零时，返回第二个参数，否则返回其第三个参数的值。
+
+评估优先级总结如下12条（从强到弱，即`*`的评估优先级高于`+`）。圆括号`()`可在任何位置使用以评估顺序。
+
+1. `()`, `[]`, `.`, `#`
+2. `^`
+3. `!`, `++`, `--`, `-` (unary)
+4. `*`, `/`, `%`
+5. `+`, `-`
+6. `<`, `>`, `<=`, `>=`
+7. `==`, `!=`
+8. `&&`
+9. `||`
+10. `?:`
+11. `=`, `+=`, `-=`, `*=`, `/=`
+
+### 5.1.6 内置函数
+
+内置函数由一个标识符和一对括号组成，括号内是*表达式列表*，即函数的参数列表。此参数列表也可以放在方括号内，而不是圆括号内。以下是当前实现的内置函数列表：
+
+*内置函数*：
+
+- Acos (expression)
+
+> 表达式的反余弦（反余弦）在 [-1,1] 范围内。返回 [0,Pi] 范围内的值。
