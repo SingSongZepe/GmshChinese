@@ -415,6 +415,236 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 
 *内置函数*：
 
-- Acos (expression)
+- `Acos (expression)`
 
-> 表达式的反余弦（反余弦）在 [-1,1] 范围内。返回 [0,Pi] 范围内的值。
+> *表达式*的反余弦（逆余弦）在 [-1,1] 范围内。返回 [0,Pi] 范围内的值。
+
+- `Asin (expression)`
+
+> *表达式*的反正弦（逆正弦）在[-1, 1]范围内。返回[-Pi/2, Pi/2]范围内的值。
+
+- `Atan (expression)`
+
+> *表达式*的反正切（逆正切）。返回[-Pi/2, Pi/2]范围的值。
+
+- `Atan2 (expression, expression)`
+
+> 第一个表达式除以第二个表达式的反正切（逆正切），返回[-Pi, Pi]之间的值。
+
+- `Ceil (expression)`
+
+> *表达式*向上取整得到最近的整数。
+
+- `Cos (expression)`
+
+> *表达式*的余弦。
+
+- `Cosh (expression)`
+
+> *表达式*的双曲余弦。
+
+- `Exp (expression)`
+
+> 返回e（自然对数的底数）的*表达式*的值的次方。
+
+- `Fabs (expression)`
+
+> *表达式*的绝对值
+
+- `Fmod (expression)`
+
+> 第一个*表达式*除以第二个*表达式*的余数，并保留第一个表达式的符号
+
+- `Floor  (expression)`
+
+> *表达式*向下取整得到最近的整数
+
+- `Hypot (expression, expression)`
+
+> 返回两个参数的平方和的平方根
+
+- `Log (expression)`
+
+> *表达式*的自然对数（*表达式* > 0）
+
+- `Log10 (expression)`
+
+> 表达式的以10为底的对数（*表达式*  > 0）
+
+- `Max (expression, expression)`
+
+> 两个参数的最大值
+
+- `Min (expression, expression)`
+
+> 两个参数的最小值
+
+- `Modulu (expression, expression)`
+
+> 参见 `Fmod (expression, expression)`
+
+- `Rand (expression)`
+
+> 0到*表达式*之间的随机数
+
+- `Round (expression)`
+
+> 四舍五入*表达式*到最近的整数
+
+- `Sqrt (expression)`
+
+> *表达式*的平方根（表达式 >= 0）
+
+- `Sin (expression)`
+
+> *表达式*的正弦
+
+- `Sinh (expression)`
+
+> *表达式*的双曲正弦
+
+- `Tan (expression)`
+
+> *表达式*的正切
+
+- `Tanh (expression)`
+
+> *表达式*的双曲正切
+
+### 5.1.7 用户自定义宏
+
+用户自定义宏不接受参数，并且被评估为就像包含宏主体的文件被包含在`Call`语句的位置。
+
+- `Marco String | string-expression`
+
+> 开始声明名称为`string`的用户自定义宏。宏的内容从“宏字符串”后的行开始，可以包含任何Gmsh命令。宏的同义词是函数。
+
+- `Return`
+
+> 结束当前用户自定义宏的内容。宏声明不能嵌套。
+
+- Call string | string-expression
+
+> 调用名称为`string`的宏的内容。
+
+参见[t5](https://gmsh.info/doc/texinfo/gmsh.html#t5)，有一个用户自定义宏的例子。Gmsh脚本语言有一个缺点是所有的变量都是公有的(public)，因此宏内部定义的变量在外部也可以被访问！
+
+### 5.1.8 循环和条件
+
+循环和条件定义如下，并且可以嵌套：
+
+- `For (expression: expression)`
+
+> 以一个单位自增步长从第一个*表达式*的值迭代到第二个*表达式*的值。在每一步迭代，`For (expression: expression)`和配对的`EndFor`之间的命令将会被执行。
+
+- `For (expression: expression: expression)`
+
+> 以等于第三个*表达式*的正或负的自增步长从第一个*表达式*的值迭代到第二个*表达式*的值。在每一步迭代，`For (expression: expression)`和配对的`EndFor`之间的命令将会被执行。
+
+- `For string In {expression: expression}`
+
+> 以一个单位自增步长从第一个*表达式*的值迭代到第二个*表达式*的值。在每一步迭代，迭代的值受到名为`string`的表达式的影响。`For (expression: expression)`和配对的`EndFor`之间的命令将会被执行。
+
+- `For string In {expression: expression: expression}`
+
+> 以等于第三个*表达式*的正或负的自增步长从第一个*表达式*的值迭代到第二个*表达式*的值。在每一步迭代，迭代的值受到名为`string`的表达式的影响。`For (expression: expression)`和配对的`EndFor`之间的命令将会被执行。
+
+- EndFor
+
+> 结束匹配的`For`命令
+
+- `If (expression)`
+
+> 如果*表达式*为非零，`If (expression)`和匹配的`ElseIf, Else`或`EndIf`之间包含的内容将会被执行(evaluated)。
+
+- `Else (expression)`
+
+> 如果*表达式*为非零并且之前匹配的代码`If`和`ElseIf`的*表达式*都不为非零，则`If (expression)`和匹配的`ElseIf, Else`或`EndIf`之间包含的内容将会被执行(evaluated)。
+
+- `Else`
+
+> 如果之前匹配的代码`If`和`ElseIf`的*表达式*都不为非零，`Else`和匹配的`EndIf`之间的内容将会被执行。
+
+- EndIf
+
+> 结束匹配的`If`命令
+
+### 5.1.9 其他常规命令
+
+下面的命令可以在Gmsh脚本的任何地方使用：
+
+- `string = expression`
+
+> 创建一个新的表达式的标识符`string`，或将*表达式*赋值给一个已经存在的表达式标识符。下面的表达式标识符被预定义了（Gmsh解释器中被硬编码）：
+> 
+> - `Pi`
+> 
+> > 返回  3.1415926535897932。
+> 
+> - `GMSH_MAJOR_VERSION`
+> 
+> > 返回 Gmsh的大版本号。
+> 
+> - `GMSH_MINOR_VERSION`
+> 
+> > 返回Gmsh的小版本号。
+> 
+> - `GMSH_PATCH_VERSION`
+> 
+> > 返回Gmsh的补丁版本号。
+> 
+> - `MPI_Size`
+> 
+> > 返回Gmsh正在运行的处理器数量。除非您使用`ENABLE_MPI`编译Gmsh，否则它始终是1（参见[编译源代码](./appendix _A_compiling_the_source_code.md)）。
+> 
+> - `MPI_Rank`
+> 
+> > 返回当前处理器的排名
+> 
+> - `Cpu`
+> 
+> > 返回当前CPU时间（以秒计）
+> 
+> - `Memory`
+> 
+> > 返回当前内存占用（以Mb即）
+> 
+> - `TotalMemory`
+> 
+> > 返回总可用内存（以Mb计）
+> 
+> - `newp`
+> 
+> > 返回下一个可用的点标签。就如[几何模块](https://gmsh.info/doc/texinfo/gmsh.html#Geometry-module)中解释的那样，每个几何点必须关联一个唯一标签：`newp`允许知道已经分发的最高的标签（通过加一）。在写用户自定义宏（参见[用户自定义宏](https://gmsh.info/doc/texinfo/gmsh.html#User_002ddefined-macros)）或常规几何原语，在不知道哪些标签已经被分发和那些标签还可用，这将会很有用。
+> 
+> - `newc`
+> 
+> > 返回下一个可用的曲线标签
+> 
+> - `news`
+> 
+> > 返回下一个可用的表面标签
+> 
+> - `newv`
+> 
+> > 返回下一个可用的体积标签
+> 
+> - `newcl`
+> 
+> > 返回下一个可用的曲线环(curve loop)标签
+> 
+> - `newsl`
+> 
+> > 返回下一个可用的表面环(volume loop)标签
+> 
+> - `newreg`
+> 
+> > 返回下一个可用的区域标签。即，`newreg`返回`newp`,`newl`,`news`,`newv`,`newcl`(此处原版gmsh文档写成`newll`，经鉴定，视为笔误，并将通过邮件形式联系gmsh作者团队进行修改), `newsl`和所有物理组的标签的最大值。
+
+
+
+- `string = {}`
+
+> 创建一个空的新的表达式列表的标识符`string`
+
+- `string[] = {expression-list}`

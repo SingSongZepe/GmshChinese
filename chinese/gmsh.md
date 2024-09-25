@@ -19,7 +19,7 @@
 9. [Gmsh插件](./gmsh_plugins.md)
 10. [Gmsh文件格式](./gmsh_file_formats.md)
 
-附录A 编译源代码
+[附录A 编译源代码](./)
 附录B 开发者信息
 附录C 频繁发问
 附录D 版本历史
