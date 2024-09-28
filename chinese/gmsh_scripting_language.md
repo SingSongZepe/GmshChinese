@@ -641,10 +641,314 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 > 
 > > 返回下一个可用的区域标签。即，`newreg`返回`newp`,`newl`,`news`,`newv`,`newcl`(此处原版gmsh文档写成`newll`，经鉴定，视为笔误，并将通过邮件形式联系gmsh作者团队进行修改), `newsl`和所有物理组的标签的最大值。
 
-
-
 - `string = {}`
 
 > 创建一个空的新的表达式列表的标识符`string`
 
-- `string[] = {expression-list}`
+- `string[] = { expression-list }`
+
+> 用列表`expression-list`创建一个新的表达式列表标识符`string`，或给一个已经存在的表达式列表标识符赋值。可用用圆括号代替方括号；虽然不建议，但是圆括号和方括号都可以被省略。
+
+- `string [{ expression-list }] = { expression-list }`
+
+> 将右侧表达式列表中的每一项影响到现有表达式列表标识符的元素（根据左侧表达式列表索引）。两个*表达式列表*必须包含相同数量的项。圆括号也可以用来代替方括号。
+
+- `string += expression`
+
+> 添加并赋值`expression`到一个存在的表达式标识符。
+
+- `string -= expression`
+
+> 减去并赋值`expression`到一个存在的表达式标识符。
+
+- `string *= expression`
+
+> 乘以并赋值`expression`到一个存在的表达式标识符。
+
+- `string /= expression`
+
+> 除以并赋值`expression`到一个存在的表达式标识符。
+
+- `string += { expression-list }`
+
+> 将表达式列表附加到现有的表达式列表或使用表达式列表创建一个新的表达式列表。
+
+- `string -= { expression-list }`
+
+> 从已经存在的表达式列表移除`expression-list`中的项。
+
+- `string [{ expression-list }] += { expression-list }`
+
+> 项对项得添加并赋值右边`expression-list`到一个已经存在的表达式列表标识符。圆括号也可以用来代替方括号。
+
+- `string [{ expression-list }] -= { expression-list }`
+
+> 项对项得减去并赋值右边`expression-list`到一个已经存在的表达式列表标识符。圆括号也可以用来代替方括号。
+
+- `string [{ expression-list }] *= { expression-list }`
+
+> 项对项得乘以并赋值右边`expression-list`到一个已经存在的表达式列表标识符。圆括号也可以用来代替方括号。
+
+- `string [{ expression-list }] /= { expression-list }`
+
+> 项对项得除以并赋值右边`expression-list`到一个已经存在的表达式列表标识符。圆括号也可以用来代替方括号。
+
+- `string = string-expression`
+
+> 用给定的*字符串表达式*创建一个新的字符串表达式标识符`string`
+
+- `string[] = Str( string-expression-list )`
+
+> 用给定的*字符串表达式*列表创建一个新的字符串表达式列表标识符`string`。圆括号也可以用来代替方括号。
+
+- `string[] += Str( string-expression-list )`
+
+> 添加字符串表达式列表到一个已经存在的表达式。圆括号也可以用来代替方括号。
+
+- `DefineConstant[ string = expression|string-expression<, ...> ] `
+
+> 仅当字符串表达式标识符`string`未被定义时，用*表达式*的值创建新的字符串表达式标识符`string`。
+
+- `DefineConstant[ string = {expression|string-expression, onelab-options} <, ...> ]`
+
+> 和前一个情况一样，但如果之前未被定义，还会和ONELAB数据库交互该变量。参见[ONELAB教程wiki](https://gitlab.onelab.info/doc/tutorials/wikis/ONELAB-syntax-for-Gmsh-and-GetDP)以获取更多信息。
+
+- `SetNumber( string-expression, expression )`
+
+> 设置数字ONELAB变量`string-expression`的值。
+
+- `SetString( string-expression, string-expression )`
+
+> 设置字符串ONELAB变量`string-expression`的值。
+
+- `number-option = expression`
+
+> 将*表达式*赋值给一个实选项(real option)。
+
+- `string-option = expression`
+
+> 将*字符串表达式*赋值给一个字符串选项(string option)。
+
+- `color-option = color-expression`
+
+> 将*颜色表达式*赋值给一个颜色选项(color option)。
+
+- `number-option += expression`
+
+> 添加并赋值*表达式*到一个实选项。
+
+- `number-option -= expression`
+
+> 减去并赋值*表达式*到一个实选项。
+
+- `number-option /= expression`
+
+> 乘以并赋值*表达式*到一个实选项。
+
+- `number-option *= expression`
+
+> 除以并赋值*表达式*到一个实选项。
+
+- `Abort`
+
+> 退出当前脚本。
+
+- `Exit < expression >`
+
+> 退出Gmsh（可用使用级别`expression`代替0）。
+
+- `Printf ( string-expression <, expression-list> )`
+
+> 在信息窗口和/或终端打印字符串表达式。`Printf`等价于C语言的`printf`函数：其中*字符串表达式*是一个可以包含浮点格式字符的格式字符串（%e, %g, etc.）。注意所有表达式都会作为Gmsh中的浮点值（参见[浮点表达式](https://gmsh.info/doc/texinfo/gmsh.html#Floating-point-expressions)）来评估，所以*字符串表达式*中只有有效的浮点格式字符才有作用。参见[t5](https://gmsh.info/doc/texinfo/gmsh.html#t5)，一个使用`Printf`的例子。
+
+- `Printf ( string-expression, expression-list ) > string-expression`
+
+> 和上面的`Printf`相同，但是输出表达式到文件内。
+
+- `Printf ( string-expression, expression-list ) >> string-expression`
+
+> 和上面的`Printf`相同，但是追加表达式到文件末尾。
+
+- `Warning|Error ( string-expression <, expression-list > )`
+
+> 和`Printf`一样，但是抛出一个警告或错误。
+
+- `Merge string-expression`
+
+> 合并名为`string-expression`的文件。这个命令等价于GUI中的"文件(File) -> 合并(Merge)"菜单。如果*字符串表达式*中的路径不是绝对的，*字符串表达式*将会添加到当前文件的路径。这个操作触发CAD模型和内置Gmsh模型的同步。
+
+- `ShapeFromFile ( string-expression )`
+
+> 合并一个BREP，STEP或IGES文件并且返回最高维实体的标签。仅在使用OpenCASCADE几何内核的时候可用。
+
+- `Draw`
+
+> 重绘场景
+
+- `SplitCurrentWindowHorizontal expression`
+
+> 按`expression`的给定比例来水平分割当前窗口。
+
+- `SplitCurrentWindowVertical expression`
+
+> 按`expression`的给定比例来竖直分割当前窗口。
+
+- `SetCurrentWindow expression`
+
+> 通过在所有窗口列表中指定当前窗口的索引（从0开始）来设置当前窗口。当新窗口被创建，它将会被添加到列表的末尾。
+
+- `UnsplitWindow`
+
+> 恢复到单独窗口。
+
+- `SetChanged`
+
+> 强制再生成网格和后处理的顶点数组。例如，对于创建具有变化剪切平面的动画时很有用。
+
+- `BoundingBox`
+
+> 重新计算场景的边界框（正常情况下，它只在新模型实体被添加或文件被包含或合并之后计算）。边界框通过以下方式计算：
+> 
+> 1. 如果经过网格划分（例如，至少一个网格节点），边界框将会取为包含所有网格点的框(box)。
+> 
+> 2. 如果没有网格划分，但是有几何体（例如，至少一个几何点），边界框将会取为包含所有几何点的框。
+> 
+> 3. 如果没有网格划分和几何体，但是有一些后处理视图，边界框将会取为包含所有视图中原语(primitives)的框。
+> 
+> 这一操作会触发CAD模型和内置Gmsh模型的同步。
+
+- `BoundingBox { expression, expression, expression, expression, expression, expression}`
+
+> 强制设置场景的边界框为指定表达式（X最小值，X最大值，Y最小值，Y最大值，Z最小值，Z最大值）。注意到坐标的顺序不同于模型实体的`BoundingBox`命令：参见[浮点表达式](https://gmsh.info/doc/texinfo/gmsh.html#Floating-point-expressions)。
+
+- `Delete Model`
+
+> 删除当前模型（所有模型实体和它们相关的网格）。
+
+- `Delete Meshes`
+
+> 删除当前模型的全部网格。
+
+- `Delete Physicals`
+
+> 删除全部物理组
+
+- `Delete Variables`
+
+> 删除全部表达式
+
+- `Delete Options`
+
+> 删除当前选项并恢复到默认值。
+
+- `Delete string`
+
+> 删除表达式`string`
+
+- `Print string-expression`
+
+> 使用当前`Print.Format`（参见[Gmsh选项](https://gmsh.info/doc/texinfo/gmsh.html#General-options)）在名为string-expression的文件中打印图像窗口。如果*字符串表达式*中的路径不是绝对的，*字符串表达式*将会添加到当前文件的路径。这个操作触发CAD模型和内置Gmsh模型的同步。
+
+- `Sleep expression`
+
+> 暂停Gmsh运行`expression`秒
+
+- `SystemCall string-expression`
+
+> 执行（阻塞）系统调用
+
+- `NonBlockingSystemCall string-expression`
+
+> 执行（非阻塞）系统调用
+
+- `OnelabRun ( string-expression <, string-expression> )`
+
+> 运行ONELAB客户端（第一个参数是客户端名称，第二个可选才是是命令行）
+
+- `SetName string-expression`
+
+> 改变当面模型的名称
+
+- `SetFactory ( string-expression )`
+
+> 改变当前几何内核（即，确定用于后续所有几何命令的CAD内核）。当前可用内核”内置“和”OpenCASCADE“
+
+- `SyncModel`
+
+> 强制将老几何模型数据库立即转移到新的几何模型（正常情况，此传输在文件阅读之后立即发生）。
+
+- `NewModel`
+
+> 创建一个新的当前模型。
+
+- `Include string-expression`
+
+> 在输入文件的当前位置包含名为`string-expression`的文件。包含命令需要单独占一行。如果*字符串表达式*中路径不是绝对的，*字符串表达式*会被添加到当前文件路径之后。
+
+### 5.2 几何脚本命令
+
+内置内核和OpenCASCADE的CAD内核都可以在脚本语言中在几何脚本命令之前分别通过指定`SetFactory("build-in")`或`SetFactory("OpenCASCADE")`来使用。如果`SetFactory`未被指定，将会使用内置内核。
+
+可以用自下而上的边界表示法，首先定义点（使用`Point`命令），然后是曲线（使用例如`Line`,`Circle`,`Spline`, ..., 命令或通过挤压点），然后是表面（使用例如`Plane`, `Surface`或`Surface`命令，或通过挤压曲线），最后是体积（使用`Volume`命令或通过挤压表面）。然后实体可以通过多种方式操作，例如使用`Translate`, `Rotate`, `Scale`或`Symmetry`命令。它们可以用`Delete`命令删除，前提是没有高阶实体引用它们。在OpenCASCADE内核下，可以使用额外的布尔运算：`BooleanIntersection`, `BooleanUnion`, `BooleanDifference`和`BooleanFragments`。
+
+接下来的小节描述所有脚本语言中可用的几何命令。请注意，定义模型实体需要遵循以下一般规则：如果*表达式*定义了新实体，则将其括在圆括号中。如果*表达式*引用先前定义的实体，则将其括在方括号中。
+
+- 点
+
+- 曲线
+
+- 表面
+
+- 体积
+
+- 挤压
+
+- 布尔运算
+
+- 变换
+
+- 其他几何命令
+
+
+
+### 5.2.1 点
+
+- `Point ( expression ) = { expression, expression, expression <, expression> }`
+
+> 创建一个点，圆括号内的*表达式*是点的标签；右边的花括号内前三个*表达式*给出欧几里和空间内三维中的点的X，Y和Z坐标；可选的最后一个*表达式*设置该点规定的网格元素尺寸。参见[指定网格元素尺寸](https://gmsh.info/doc/texinfo/gmsh.html#Specifying-mesh-element-sizes)，以获取关于如何在网格划分过程中使用改值的更多信息。
+
+- `Physical Point ( expression|string-expression <, expression> ) <+|->= { expression-list }`
+
+> 创建一个物理点。圆括号内部的*表达式*是物理点的标签；右边的*表达式列表*应该包含所有物理点内需要被分组的基本点的标签。如果圆括号内给定的是*字符串表达式*而非*表达式*，则字符标签与物理标签相关联，可以显式提供（在逗号后）或不提供（这种情况下，将会自动创建唯一标签）。
+
+
+
+### 5.2.2 曲线
+
+- `Line ( expression ) = { expression, expression }`
+
+> 创建一个直线段。圆括号内的*表达式*是线段的标签；右边的花括号内的两个*表达式*给出线段起点和终点的标签。
+
+- `Bezier ( expression ) = { expression-list }`
+
+> 创建一个贝塞尔曲线。*表达式列表*包含控制点的标签。
+
+- `BSpline ( expression ) = { expression-list }`
+
+> 创建三次B样条曲线（cubic BSpline）。*表达式列表*包含控制点的标签。如果第一个和最后一个点相同，则创建一个周期曲线。
+
+- `Spline ( expression ) = { expression-list }`
+
+> 创建一个穿过表达式列表中点的样条曲线。使用内置几何内核时它构建一个Catmull-Rom样条曲线。使用OpenCASCADE内核时它构建一个C2 B样条曲线。如果第一个和最后一个点相同，则创建一个周期曲线。
+
+- `Circle ( expression ) = { expression, expression, expression <, ...> }`
+
+> 创建一个圆弧。如果右边提供三个*表达式*，则它们定义圆弧的起点、圆心和终点。使用内置内核时，圆弧应该严格小于Pi。使用OpenCASCADE内核，如果提供了第4到第6之间*表达式*，前三项提供了圆心的坐标，接下来的一个定义了半径，接下来两个可选参数提供了起点角度和终点角度。
+
+- `Ellipse ( expression ) = { expression, expression, expression <, ...> }`
+
+> 创建一个椭圆弧，如果右边提供四个*表达式*，则它们定义起点、中心，任意一个一个主轴上的点和终点。如果第一个点是主轴点，第三个表达式可以被省略。使用OpenCADCASE内核时，如果提供了第5到第7个*表达式*，前三个定义了中心，接下来的两个定义长半径（沿着x轴）和短半径（染着y轴），再接下来的两个提供了起点角度和终点角度。请注意，OpenCASCADE不允许创建椭圆弧时长半径小于短半径。
+
+- `Compound Spline | BSpline ( expression ) = { expression-list } Using expression`
+
+> 从`expression-list`中的曲线上的取样控制点创建样条曲线或B样条曲线。`Using`*表达式*指定每条曲线上计算采样点的区间数。复合样条曲线和B样条曲线仅适用于内置几何内核
