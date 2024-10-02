@@ -909,8 +909,6 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 
 - 其他几何命令
 
-
-
 ### 5.2.1 点
 
 - `Point ( expression ) = { expression, expression, expression <, expression> }`
@@ -920,8 +918,6 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 - `Physical Point ( expression|string-expression <, expression> ) <+|->= { expression-list }`
 
 > 创建一个物理点。圆括号内部的*表达式*是物理点的标签；右边的*表达式列表*应该包含所有物理点内需要被分组的基本点的标签。如果圆括号内给定的是*字符串表达式*而非*表达式*，则字符标签与物理标签相关联，可以显式提供（在逗号后）或不提供（这种情况下，将会自动创建唯一标签）。
-
-
 
 ### 5.2.2 曲线
 
@@ -951,4 +947,40 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 
 - `Compound Spline | BSpline ( expression ) = { expression-list } Using expression`
 
-> 从`expression-list`中的曲线上的取样控制点创建样条曲线或B样条曲线。`Using`*表达式*指定每条曲线上计算采样点的区间数。复合样条曲线和B样条曲线仅适用于内置几何内核
+> 从`expression-list`中的曲线上的取样控制点创建样条曲线或B样条曲线。`Using`*表达式*指定每条曲线上计算采样点的区间数。复合样条曲线和B样条曲线仅适用于内置几何内核。
+
+- `Cruve Loop ( expression ) = { expression-list }`
+
+> 创建一个有向曲线环，即一条闭合的路径。圆括号内的*表达式*是曲线环的标签；右边的*表达式列表*应该包含组成曲线环的全部曲线的标签。曲线环必须是闭环。使用内置几何内核时，曲线必须有序并且有向，使用负数标签可以指定相反方向。（如果朝向是正确的，但是顺序有误，Gmsh实际上会在内部重新排序列表以建立一致的环；内置内核也支持在`Curve Loop`中使用多曲线环（或子环），但是并不建立这样做）。使用OpenCASCADE内核时，曲线环始终朝向第一个曲线的方向；可以指定负数标签来兼容内置内核，但会被忽略。曲线环可以用来创建曲面：参见[表面](https://gmsh.info/doc/texinfo/gmsh.html#Surfaces)。
+
+- `Wire ( expression ) = { expression-list }`
+
+> 创建一条由曲线构成的路径。`Wire`仅适用于OpenCASCADE内核。它们用来创建`ThruSections`和沿着路径挤压。
+
+- `Physical Curve ( expression|string-expression <, expression> ) <+|-> = { expression-list }`
+
+> 创建一条物理曲线。圆括号内的*表达式*是物理曲线的标签；右边的*表达式列表*应该包含需要在物理曲线内分组的所有基本曲线的标签。如果圆括号内给出*字符串表达式*而不是*表达式*，字符串标签会和物理标签（可以显式给出（在逗号后）或不给出（这种情况下会自动创建一个为标签））相关联。在某些网格划分文件格式中（例如，MSH2），在表达式列表内指定负数标签会反转保存的网格划分文件内该网格元素所属的相应基本曲线的方向。
+
+
+
+### 5.2.3 表面
+
+- `Plane Surface ( expression ) = { expression-list }`
+
+> 创建一个平面表面。圆括号内的*表达式*是平面表面的标签；右边的*表达式列表*应该包含所有定义该表面的曲线环的标签。第一个曲线环定义表面的外部边界；所有其他曲线环定义表面内的孔。曲线环定义孔不应有任何一条曲线和外曲线环公用（这种情况下，它不是孔，并且两个表面应该分开定义）。同样地，曲线环定义孔不应有任何一条曲线和同表面内的另外一个定义孔的曲线环公用（这种情况下，两个曲线环应该结合）。
+
+- `Surface ( expression ) = { expression-list } < In Sphere { expression }, Using Point { expression-list } >`
+
+> 创建一个表面填充。使用内部内核时，第一个曲线环应该由三或四条曲线组成，表面采用超限插值构建(transfinite interpolation)，并且可选的`In Sphere`参数强制强制表面成为球面（额外的参数给出球心的标签）。使用OpenCASCADE内核时，通过优化构造 B 样条曲面来匹配边界曲线，以及使用`Using Point`后提供的（可选的）点。
+
+- `BSpline Surface ( expression ) = { expression-list }`
+
+> 创建一个B样条表面填充。仅可提供由 2、3 或 4 条 BSpline 曲线构成的单个曲线环。B样条曲面也适用于OpenCASCADE内核。
+
+- `Bezier Surface ( expression ) = { expression-list }`
+
+> 创建一个贝塞尔曲面填充。仅可提供由 2、3 或 4 条 BSpline 曲线构成的单个曲线环。贝塞尔曲面也适用于OpenCASCADE内核。
+
+- `Disk ( expression ) = { expression-list }`
+
+> 创建一个圆盘。当右侧提供四个表达式（中心和半径的 3 个坐标）时，圆盘为圆形。第五个表达式定义沿 Y 方向的半径，从而形成椭圆形。圆盘仅适用于 OpenCASCADE 内核。
