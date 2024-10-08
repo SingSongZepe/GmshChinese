@@ -961,8 +961,6 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 
 > 创建一条物理曲线。圆括号内的*表达式*是物理曲线的标签；右边的*表达式列表*应该包含需要在物理曲线内分组的所有基本曲线的标签。如果圆括号内给出*字符串表达式*而不是*表达式*，字符串标签会和物理标签（可以显式给出（在逗号后）或不给出（这种情况下会自动创建一个为标签））相关联。在某些网格划分文件格式中（例如，MSH2），在表达式列表内指定负数标签会反转保存的网格划分文件内该网格元素所属的相应基本曲线的方向。
 
-
-
 ### 5.2.3 表面
 
 - `Plane Surface ( expression ) = { expression-list }`
@@ -984,3 +982,65 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 - `Disk ( expression ) = { expression-list }`
 
 > 创建一个圆盘。当右侧提供四个表达式（中心和半径的 3 个坐标）时，圆盘为圆形。第五个表达式定义沿 Y 方向的半径，从而形成椭圆形。圆盘仅适用于 OpenCASCADE 内核。
+
+- `Rectangle ( expression ) = { expression-list }`
+
+> 创建一个矩形。前三个表达式定义左下角；接下来的两个定义宽和高。如果提供了第6个表达式，则它定义了矩形的圆角半径。`Rectangle` 仅适用于OpenCASCADE内核。
+
+- `Surface Loop ( expression ) = { expression-list } < Using Sewing >`
+
+> 创建一个表面环路(surface loop)（一个壳(shell)）。圆括号内的*表达式*是表面环路的标签；右边的*表达式列表*应该包含组成表面环路的全部表面的标签。表面环路总是表示闭合的壳，并且表面应该方向一致（使用负数标签来指定反方向）。（表面环路常用来创建体积：参见[体积](https://gmsh.info/doc/texinfo/gmsh.html#Volumes)。）使用OpenCASCADE内核时，可选的`Using Sewing`参数允许创建构成壳的表面共用几何同一（但是拓扑不同）的曲线。
+
+- `Physical Surface ( expression | string-expression <, expression> <+|-> = { expression-list } )`
+
+> 创建一个物理表面。圆括号内的*表达式*是物理表面的标签；右边的表达式列表应该包含所有需要分组到物理表面的基本表面的标签。如果圆括号内给出的是*字符串表达式*而不是*表达式*，则字符串标签会和物理标签相关联，后者可以显式提供（在逗号后）或不提供（这种情况下会自动创建唯一标签）。在一些网格划分文件格式（例如MSH2）中，在表达式列表中指定负数标签会反转保存在网格划分文件内属于相应基本表面的网格元素的方向。
+
+
+
+### 5.2.4 体积
+
+- `Volume ( expression ) = { expression-list }`
+
+> 创建一个体积。圆括号内的*表达式*是体积的标签；右边的*表达式列表*应该包含定义该体积的全部表面环路的标签。第一个表面环路定义体积的外边界；所有其他的表面环路定义体积内的孔。表面环路定义孔时，不应与外部表面环路公用表面（这种情况下不是孔，并且两个体积需要分开定义）。同样，表面环路定义孔时，不应与相同体积内的其他定义孔的表面环路公用表面（这种情况下两个表面环路可以组合）。
+
+- `Sphere ( expression ) = { expression-list }`
+
+> 创建一个体积，由其中心的三维坐标和半径定义。额外的参数定义3个角度极限。前两个可选参数定义极角张开大小（从-Pi/2到Pi/2）。可选的“角3”定义方位角张开大小（从0到2*Pi）。`Sphere`仅适用于OpenCASCADE内核。
+
+- `Box ( expression ) = { expression-list }`
+
+> 创建一个方框，由一个点的三维坐标和3个伸长量定义。`Box`仅适用于OpenCASCADE内核。
+
+- `Cylinder ( expression ) = { expression-list }`
+
+> 创建一个圆柱，由第一个圆面的圆心的三维坐标，定义轴的向量的三个分量及其半径定义。额外一个表达式定义张角(angular opening)。`Cylinder`仅适用于OpenCASCADE内核。
+
+- `Torus ( expression ) = { expression-list }`
+
+> 创建一个圆环，由其中心的三维坐标和两个半径定义。额外一个表达式定义张角。`Torus`仅适用于OpenCASCADE内核。
+
+- `Cone ( expression ) = { expression-list }`
+
+> 创建一个锥体，由其第一个圆面的圆心的三维坐标，定义轴的向量的三个分量及其两个面的半径（半径可以为0）。额外一个表达式定义张角。`Cone`仅适用于OpenCASCADE内核。
+
+- `Wedge ( expression ) = { expression-list }`
+
+> 创建一个直角楔，由其直角点的三维坐标和3个伸长量定义。额外一个参数定义顶部X伸长量（默认为0）。`Wedge`仅适用于OpenCASCADE内核。
+
+- `ThrusSections ( expression ) = { expression-list }`
+
+> 创建一个由曲线环定义的体积（截面）。`ThruSections`仅适用于OpenCASCADE内核。
+
+- `Ruled ThruSections ( expression ) = { expression-list }`
+
+> 和`ThruSections`相同，但是边界上创建的表面强制被控制。`Ruled ThruSections`仅适用于OpenCASCADE内核。
+
+- `Physical Volume ( expression|string-expression <, expression> ) <+|->= { expression-list }`
+
+> 创建一个物理体积。圆括号内的*表达式*是物理体积的标签；右边的*表达式列表*一个包含所有需要分组到物理体积的基本体积的标签。如果圆括号内给出的是*字符串表达式*而不是*表达式*，则字符串标签会和物理标签相关联，后者可以显式提供（在逗号后）或不提供（这种情况下会自动创建唯一标签）。
+
+
+
+### 挤压
+
+曲线，表面和体积可以分别通过点，曲线和表面的挤压创建。这是几何挤压命令的语法（去往[结构网格](https://gmsh.info/doc/texinfo/gmsh.html#Structured-grids)，看看如何扩展这些命令以便挤压网格）。
