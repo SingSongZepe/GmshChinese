@@ -995,8 +995,6 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 
 > 创建一个物理表面。圆括号内的*表达式*是物理表面的标签；右边的表达式列表应该包含所有需要分组到物理表面的基本表面的标签。如果圆括号内给出的是*字符串表达式*而不是*表达式*，则字符串标签会和物理标签相关联，后者可以显式提供（在逗号后）或不提供（这种情况下会自动创建唯一标签）。在一些网格划分文件格式（例如MSH2）中，在表达式列表中指定负数标签会反转保存在网格划分文件内属于相应基本表面的网格元素的方向。
 
-
-
 ### 5.2.4 体积
 
 - `Volume ( expression ) = { expression-list }`
@@ -1039,8 +1037,42 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 
 > 创建一个物理体积。圆括号内的*表达式*是物理体积的标签；右边的*表达式列表*一个包含所有需要分组到物理体积的基本体积的标签。如果圆括号内给出的是*字符串表达式*而不是*表达式*，则字符串标签会和物理标签相关联，后者可以显式提供（在逗号后）或不提供（这种情况下会自动创建唯一标签）。
 
-
-
 ### 挤压
 
 曲线，表面和体积可以分别通过点，曲线和表面的挤压创建。这是几何挤压命令的语法（去往[结构网格](https://gmsh.info/doc/texinfo/gmsh.html#Structured-grids)，看看如何扩展这些命令以便挤压网格）。
+
+
+
+***挤压***
+
+- `Extrude { expression-list } { extrude-list }`
+
+> 使用平移挤压所有*待挤压列表*的基本实体。*表达式列表*应该包含三个*表达式*给出平移向量的X，Y和Z分量。
+
+- `Extrude { { expression-list }, { expression-list }, expression } { extrude-list }`
+
+> 使用旋转挤压所有*待挤压列表*的基本实体。第一个*表达式列表*应该包含三个*表达式*给出旋转轴的X，Y和Z方向；第二个*表达式列表*应该包含三个*表达式*给出轴上任意一点的X，Y和Z分量；最后一个*表达式*应该包含旋转角度（弧度制）。使用内置内核时，角度必须严格小于Pi。
+
+- `Extrude { { expression-list }, { expression-list }, { expression-list }, expression } { extrude-list }`
+
+> 使用平移和旋转（作用效果为“扭曲”）挤压所有*待挤压列表*的基本实体。第一个*表达式列表*包含三个*表达式*给出平移向量的X，Y和Z分量；第二个*表达式列表*应该包含三个*表达式*给出旋转轴的X，Y和Z方向；第三个*表达式列表*应该包含三个*表达式*给出轴上任意一点的X，Y和Z分量；最后一个*表达式*应该包含旋转角度（弧度制）。使用内置内核时，角度必须严格小于Pi。
+
+- `Extrude { extrude-list }`
+
+> 使用平移沿着他们的法线挤压*待挤压列表*的实体。仅使用于内置几何内核。
+
+- `Extrude { extrude-list } Using Wire { expression-list }`
+
+> 沿着给出的路径挤压*待挤压列表*的实体。仅使用于OpenCASCADE几何内核。
+
+- `ThruSections { expression-list }`
+
+> 通过给定的曲线环或路径创建表面。`ThruSections`仅适用于OpenCASCADE内核。
+
+- `Ruled ThruSections { expression-list }`
+
+> 通过给定的曲线环或路径创建控制表面。`Ruled ThruSections`仅适用于OpenCASCADE内核。
+
+- `Fillet { expression-list } { expression-list } { expression-list }`
+
+> 
