@@ -1041,8 +1041,6 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 
 曲线，表面和体积可以分别通过点，曲线和表面的挤压创建。这是几何挤压命令的语法（去往[结构网格](https://gmsh.info/doc/texinfo/gmsh.html#Structured-grids)，看看如何扩展这些命令以便挤压网格）。
 
-
-
 ***挤压***
 
 - `Extrude { expression-list } { extrude-list }`
@@ -1075,4 +1073,71 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 
 - `Fillet { expression-list } { expression-list } { expression-list }`
 
-> 
+> 使用提供的半径（第三个列表）在某些曲线（第二个列表）上对体积进行圆角处理（第一个列表）。半径列表要么包含一个半径，要么包含与曲线一样多的半径或两倍于曲线数量的半径（这种情况下曲线的起点和终点的半径将会不同）。
+
+- `Chamfer { expression-list } { expression-list } { expression-list } { expression-list }`
+
+> 使用在给定表面（第三个列表）上测量提供的距离（第四个列表）在某些（第二个列表）上对体积（第一个列表）进行倒角。距离列表要么包含一个距离，要么包含与曲线一样多的半径或两倍于曲线数量的距离（这种情况下每对的第一个在给定的相应表面上进行测量）。`Chamfer`仅适用于OpenCASCADE内核。
+
+
+
+使用
+
+```GMSH
+extrude-list:
+<Physical> Point | Curve | Surface { expression-list-or-all }; ...
+```
+
+就如[浮点表达式](https://gmsh.info/doc/texinfo/gmsh.html#Floating-point-expressions)中说明的那样，挤压可以在表达式中使用，这种情况下它返回一个标签的列表。默认情况下，列表包含索引 0 处的挤压实体的“顶部”和索引 1 处的挤压实体，然后是索引 2、3 等处的挤压实体的“侧面”。例如：
+
+```GMSH
+Point(1) = {0, 0, 0};
+
+Point(2) = {1, 0, 0};
+
+Line(1) = {1, 2};
+
+out[] = Extrude {0, 1, 0} { Curve {1}; };
+
+Printf("top curve = %g", out[0]);
+
+Printf("surface = %g", out[1]);
+
+Printf("side curves = %g and %g", out[2], out[3]);
+```
+
+这种行为可以通过Geometry.ExtrudeReturnLateralEntities选项改变（参见[几何选项](https://gmsh.info/doc/texinfo/gmsh.html#Geometry-options)）。
+
+
+
+### 5.2.6 布尔操作
+
+布尔操作可以在曲线，表面和体积上应用。所有布尔操作作用在两个基本实体的列表上。第一个列表表示物体(object)，第二个表示工具(tool)。对于布尔操作的基本语法如下：
+
+布尔：
+
+- `BooleanIntersection { boolean-list } { boolean-list }`
+
+> 计算物体和工具的交集。
+
+- `BooleanUnion { boolean-list } { boolean-list }`
+
+> 计算物体和工具的集合。
+
+- `BooleanDifference { boolean-list } { boolean-list }`
+
+> 物体减去工具。
+
+- `BooleanFragments { boolean-list } { boolean-list }`
+
+> 计算对象和工具中实体交集产生的所有片段，使所有接口都具有共形性。当作用于不同维度的实体时，如果低维度实体不在高纬度实体的边界上，低维度实体自动嵌入到高维实体内。
+
+使用
+
+```GMSH
+boolean-list:
+<Physical> Curve | Surface | Volume { expression-list-or-all }; ... |
+Delete
+```
+
+如果*布尔列表*里指定`Delete`，工具和/或物体会被删除。
