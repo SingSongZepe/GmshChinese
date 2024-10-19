@@ -1079,8 +1079,6 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 
 > 使用在给定表面（第三个列表）上测量提供的距离（第四个列表）在某些（第二个列表）上对体积（第一个列表）进行倒角。距离列表要么包含一个距离，要么包含与曲线一样多的半径或两倍于曲线数量的距离（这种情况下每对的第一个在给定的相应表面上进行测量）。`Chamfer`仅适用于OpenCASCADE内核。
 
-
-
 使用
 
 ```GMSH
@@ -1107,8 +1105,6 @@ Printf("side curves = %g and %g", out[2], out[3]);
 ```
 
 这种行为可以通过Geometry.ExtrudeReturnLateralEntities选项改变（参见[几何选项](https://gmsh.info/doc/texinfo/gmsh.html#Geometry-options)）。
-
-
 
 ### 5.2.6 布尔操作
 
@@ -1141,3 +1137,38 @@ Delete
 ```
 
 如果*布尔列表*里指定`Delete`，工具和/或物体会被删除。
+
+[浮点表达式](https://gmsh.info/doc/texinfo/gmsh.html#Floating-point-expressions)中说明，*boolean*可以用于表达式，这种情况下它返回一个通过布尔操作创建的最高维实体的标签的列表。参见[示例/布尔](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/examples/boolean/)。
+
+如果预先知道作用在单个（最高维）实体上，存在一个替代的布尔操作的语法。
+
+
+
+***boolean-explicit***
+
+- `BooleanIntersection ( expression ) = { boolean-list } { boolean-list }`
+
+> 计算物体和工具的交集并且分配其结果给*expression*对应的标签。
+
+- `BooleanUnion ( expression ) = { boolean-list } { boolean-list }`
+
+> 计算物体和工具的并集并且分配其结果给*expression*对应的标签。
+
+- `BooleanDifference ( expression ) = { boolean-list } { boolean-list }`
+
+> 从物体减去工具并且分配其结果给*expression*对应的标签。
+
+同样，参见[示例/布尔](https://gitlab.onelab.info/gmsh/gmsh/blob/gmsh_4_13_1/examples/boolean/)以获取示例。
+
+布尔操作仅适用于OpenCASCADE几何内核。
+
+### 5.2.7 变换
+
+几何变换可以应用于基本实体，或基本实体的复制（使用`Duplicate` 命令：请看下面）。变换命令的语法是：
+***transform:***
+
+- `Dilate { { expression-list }, expression } { transform-list }`
+
+> 按*expression*为值的因子缩放*变换列表*内所有基本元素。*表达式列表*应该包含同类变化中心的给出X，Y和Z坐标的三个*表达式*。
+
+- `Dilate`
