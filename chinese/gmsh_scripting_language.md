@@ -61,7 +61,7 @@ Gmsh脚本文件支持C和C++风格注释
 
 Gmsh脚本中使用的两种常量类型是*实数*和*字符串*（没有整数类型）。这些类型的含义和语法与C和C++编程语言相同。
 
-浮点表达式（或更简单的，”表达式“）通过元句法变量*表达式*表示，并且在解析脚本文件时进行评估：
+浮点表达式（或更简单的，”表达式“）通过元句法变量*表达式*表示，在解析脚本文件时进行评估：
 
 ```GmshScriptingLanguage
 expression:
@@ -181,7 +181,7 @@ expression-list-item:
 
 接下来的两种情况允许引用表达式子列表（其元素对应于*表达式列表*提供的索引）。接下来的情况允许检索通过几何变换、挤压和布尔运算创建的实体的索引（参见[变换](https://gmsh.info/doc/texinfo/gmsh.html#Transformations)、[挤压](https://gmsh.info/doc/texinfo/gmsh.html#Extrusions)和[布尔运算](https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations)）。
 
-接下来的两种情况允许检索给定边框中的实体，或得到给定实体的边框（边框被指定为（X最小值，Y最小值，Z最小值，X最大值，Y最大值，Z最大值））。请注意，坐标的顺序和场景的`BoundingBox`命令中的不同：参见[其他常规命令](https://gmsh.info/doc/texinfo/gmsh.html#Other-general-commands)。最后一种情况允许检索实体的质量、质心或惯性矩阵、给定集合点的坐标（参见[Points](https://gmsh.info/doc/texinfo/gmsh.html#Points)）、组成物理组的基本实体和模型中所有（物理或基本）点、曲线、表面或体积。这些操作都会出发CAD模型与内部Gmsh模型的同步。
+接下来的两种情况允许检索给定边框中的实体，或得到给定实体的边框（边框被指定为（X最小值，Y最小值，Z最小值，X最大值，Y最大值，Z最大值））。请注意，坐标的顺序和场景的`BoundingBox`命令中的不同：参见[其他常规命令](https://gmsh.info/doc/texinfo/gmsh.html#Other-general-commands)。最后一种情况允许检索实体的质量、质心或惯性矩阵、给定集合点的坐标（参见[Points](https://gmsh.info/doc/texinfo/gmsh.html#Points)）、组成物理组的基本实体和模型中所有（物理或基本）点、曲线、表面或体积。这些操作都会触发CAD模型与内部Gmsh模型的同步。
 
 要了解此类表达式的实际用途，请查看[Gmsh教程](./gmsh_tutoral.md)中的前几个示例。请注意，为了简化语法，如果*表达式列表*仅包含单个项目，您可以省略包括住*表达式列表*的花括号`{}`。另外请注意，可以在花括号*表达式列表*前添加一个负号，以改变所有*表达式列表项*的符号。
 
@@ -775,7 +775,7 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 
 - `Merge string-expression`
 
-> 合并名为`string-expression`的文件。这个命令等价于GUI中的"文件(File) -> 合并(Merge)"菜单。如果*字符串表达式*中的路径不是绝对的，*字符串表达式*将会添加到当前文件的路径。这个操作触发CAD模型和内置Gmsh模型的同步。
+> 合并名为`string-expression`的文件。这个命令等价于GUI中的"文件(File) -> 合并(Merge)"菜单。如果*字符串表达式*中的路径不是绝对的，*字符串表达式*将会添加到当前文件的路径。这一操作触发CAD模型和内置Gmsh模型的同步。
 
 - `ShapeFromFile ( string-expression )`
 
@@ -885,7 +885,7 @@ Gmsh操作符与C和C++中的相应运算符类似。这里是可用的一元，
 
 > 在输入文件的当前位置包含名为`string-expression`的文件。包含命令需要单独占一行。如果*字符串表达式*中路径不是绝对的，*字符串表达式*会被添加到当前文件路径之后。
 
-### 5.2 几何脚本命令
+## 5.2 几何脚本命令
 
 内置内核和OpenCASCADE的CAD内核都可以在脚本语言中在几何脚本命令之前分别通过指定`SetFactory("build-in")`或`SetFactory("OpenCASCADE")`来使用。如果`SetFactory`未被指定，将会使用内置内核。
 
@@ -1142,8 +1142,6 @@ Delete
 
 如果预先知道作用在单个（最高维）实体上，存在一个替代的布尔操作的语法。
 
-
-
 ***boolean-explicit***
 
 - `BooleanIntersection ( expression ) = { boolean-list } { boolean-list }`
@@ -1169,6 +1167,115 @@ Delete
 
 - `Dilate { { expression-list }, expression } { transform-list }`
 
-> 按*expression*为值的因子缩放*变换列表*内所有基本元素。*表达式列表*应该包含同类变化中心的给出X，Y和Z坐标的三个*表达式*。
+> 按*expression*为值的因子缩放*变换列表*内所有基本实体。*表达式列表*应该包含同类变换中心的给定的X，Y和Z坐标的三个*表达式*。
 
-- `Dilate`
+- `Dilate { { expression-list }, { expression, expression, expression } } { transform-list }`
+
+> 按不同的因子（这三个*表达式*）分别沿着X，Y和Z缩放*变换列表*内所有基本实体。*表达式列表*应该包含同类变换中心的给定的X，Y和Z坐标的三个*表达式*。
+
+- `Rotate { { expression-list }, { expression-list }, expression } { transform-list }`
+
+> 按*expression*为值的弧度的角度旋转*变换列表*内所有的基本实体。第一个*表达式列表*应该包含旋转轴的给定的X，Y和Z方向的三个*表达式*；第二个*表达式列表*应该包含轴上任意一点的X，Y和Z分量的三个表达式。
+
+- `Symmetry { expression-list } { transform-list }`
+
+> 将所有基本实体对称变换至平面。*表达式列表*应该包含给出这个平面方程的参数的四个表达式。
+
+- `Affine { expression-list } { transform-list }`
+
+> 将4x4仿射变换矩阵（每行提供 16 个条目；为方便起见，只能提供 12 个）应用在所有基本实体上。现在只能OpenCASCADE内核上使用。
+
+- `Translate { expression-list } { transform-list }`
+
+> 变换*变换列表*中所有的基本实体。表达式列表应该包含变换向量的给定的X，Y和Z轴的三个*表达式*。
+
+- `Boundary { transform-list }`
+
+> 本身(pre-se)不是一种变换类型。返回在*变换列表*中的基本实体的边界上的实体，并附带符号，用以表示他们在边界上的方向。如果要获取不带符号的标签（例如，在其他命令中使用该命令输出结果），对返回的列表使用`Abs`函数。这一操作会触发CAD模型与内部Gmsh模型的同步。
+
+- `CombinedBoundary { transform-list }`
+
+> 本身(pre-se)不是一种变换类型。返回*变换列表*中基本实体的边界，组合起来就像一个实体。在计算一个复杂部分的边界时有用。这一操作会触发CAD模型与内部Gmsh模型的同步。
+
+- `PointsOf { transform-list }`
+
+> 本身(pre-se)不是一种变换类型。返回基本实体边界上的所有几何点。在计算一个复杂部分的边界时有用。这一操作会触发CAD模型与内部Gmsh模型的同步。
+
+- `Intersect Curve { expression-list } Surface { expression }`
+
+> 本身(pre-se)不是一种变换类型。返回*表达式列表*中给出的曲线和指定表面的交点。现在仅适用于内置内核。
+
+- `Split Curve { expression } Point { expression-list }`
+
+> 本身(pre-se)不是一种变换类型。用指定的控制点分割*expression*对应的曲线。仅适用于内置内核，对于线，样条曲线，B样条曲线。
+
+使用：
+
+```GMSH
+transform-list:
+  <Physical> Point | Curve | Surface | Volume
+    { expression-list-or-all }; … |
+  Duplicata { <Physical> Point | Curve | Surface | Volume
+    { expression-list-or-all }; … } |
+  transform
+```
+
+### 5.2.8 其他几何命令
+
+如下是现在可用的所有其他几何命令的列表：
+
+- `Coherence;`
+
+> 移除所有重复的基本实体（例如，有相同坐标的点）。注意，使用内置内核时，在每个几何变换之后，Gmsh自动执行`Coherence`命令，除非`Geometry.AutoCoherence`被设置为零（参见[几何选项](https://gmsh.info/doc/texinfo/gmsh.html#Geometry-options)）。使用OpenCASCADE内核时，`Coherence `只是对所有实体执行 `BooleanFragments `操作的快捷方式，其中 `Delete `运算符应用于所有操作数。
+
+- `HealShapes;`
+
+> 依据`Geometry.OCCFixDegenerated`, `Geometry.OCCFixSmallEdges`,`Geometry.OCCFixSmallFaces`, `Geometry.OCCSewFaces`, `Geometry.OCCMakeSolids`应用形状修复程序。仅适用于OpenCASCADE几何内核。
+
+- `< Recursive > Delete { <Physical> Point | Curve | Surface | Volume { expression-list-or-all }; … }`
+
+> 删除所有在*expression-list-or-all*中给出标签的基本实体。如果一个实体链接到另一个实体（例如，如果一个点被用作曲线的控制点），则`Delete`无效（必须先删除曲线，然后才能删除点）。`Recursive`变体会删除实体及其所有较低维度的子实体。这一操作会触发 CAD 模型与内部 Gmsh 模型的同步。
+
+- `Delete Embedded { <Physical> Point | Curve | Surface | Volume { expression-list-or-all }; … }`
+
+> 删除在*expression-list-or-all*中给出标签的基本实体中的所有嵌入实体。这一操作会触发 CAD 模型与内部 Gmsh 模型的同步。
+
+- `SetMaxTag Point | Curve | Surface | Volume ( expression )`
+
+> 强制设定一种类别的实体的标签最大值为给定值，之后创建的相同类别的实体将不会有大于（原文此处为smaller，结合上下文认定为文本错误）给定值的标签。
+
+- `< Recursive > Hide { <Physical> Point | Curve | Surface | Volume { expression-list-or-all }; … }`
+
+> 隐藏*expression-list-or-all*中列出的实体。
+
+- `Hide { : }`
+
+> 隐藏所有实体。
+
+- `< Recursive > Show { <Physical> Point | Curve | Surface | Volume { expression-list-or-all }; … }`
+
+> 显示*expression-list-or-all*中列出的实体。
+
+- `Show { : }`
+
+> 显示全部实体。
+
+- `Sphere | PolarSphere ( expression ) = {expression, expression};`
+
+> 将内置几何内核使用的当前（表面）几何体更改为（极）球体，由右侧指定的两个点标签定义。左边圆括号内的*表达式*为这个新几何体指定一个新的唯一标签。
+
+- `Parametric Surface ( expression ) = "string" "string" "string";`
+
+> 将内置几何内核使用的当前（表面）几何体更改为一个参数表面，由三个字符串表达式定义，分别计算 X，Y和Z坐标。
+
+- `Coordinates Surface expression;`
+
+> 将内置几何内核使用的当前（表面）几何体更改为标识为给定*表达式*的几何体。
+
+- `Euclidian Coordinates;`
+
+> 存储给内置几何内核的默认平面几何。
+
+
+
+## 5.3 网格划分脚本命令
