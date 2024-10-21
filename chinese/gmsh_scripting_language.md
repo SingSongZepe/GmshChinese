@@ -1276,6 +1276,62 @@ transform-list:
 
 > 存储给内置几何内核的默认平面几何。
 
-
-
 ## 5.3 网格划分脚本命令
+
+网格划分模块脚本语言允许修改网格划分元素尺寸和指定结构化网格参数。特定的网格划分行为（例如，“划分所有表面”）也可以在脚本文件中指定，但是通常在GUI或命令行中运行。（参见[Gmsh图形用户界面](https://gmsh.info/doc/texinfo/gmsh.html#Gmsh-graphical-user-interface/)和[Gmsh命令行界面](https://gmsh.info/doc/texinfo/gmsh.html#Gmsh-command_002dline-interface)）。
+
+- 网格元素尺寸
+
+- 结构化网格
+
+- 其他网格划分命令
+
+### 5.3.1 网格元素尺寸
+
+如下这些网格划分命令和网格元素尺寸的指定有关：
+
+- `MeshSize { expression-list } = expression;`
+
+> 修改标签在*表达式列表*中的点的预定网格元素尺寸。新值由*表达式*给出。
+
+- `Field[expression] = string;`
+
+> 创建一个新的字段（其标签为*表达式*的值），类型为*字符串*
+
+- `Field[expression].string = string-expression | expression | expression-list;`
+
+> 设定第*expression*个选项*string*的字段。
+
+- `Background Field = expression;`
+
+> 选择第*expression*个字段用作计算元素尺寸。只能给出一个背景字段；如果你想组合几个字段，使用`Min`或`Max`字段（参见下面的内容）。
+
+### 5.3.2 结构化网格
+
+- `Extrude { expression-list } { extrude-list layers }`
+
+> 同时使用变换挤压几何体和网格划分（参见[挤压](https://gmsh.info/doc/texinfo/gmsh.html#Extrusions)）。`layers`选项决定网格是如何挤压的，该命令具有如下的语法：
+> 
+> ```GMSH
+> layers:
+> ```
+> 
+> ```GMSH
+>   Layers { expression } |
+>   Layers { { expression-list }, { expression-list } } |
+>   Recombine < expression >; …
+>   QuadTriNoNewVerts <RecombLaterals>; |
+>   QuadTriAddVerts <RecombLaterals>; ...
+> ```
+> 
+> 在第一个`Layers`形式中，*expression*给出在该（单）层创建的元素的数量。在第二个形式中，第一个*表达式列表*定义在每个挤压层应该创建多少个元素，第二个*表达式列表*给出每一层的归一化高度（列表应该包含n个数字的序列 0 < h1 < h2 < ... <= 1）. 参见[t3](https://gmsh.info/doc/texinfo/gmsh.html#t3)的一个示例。
+> 
+> 对于曲线挤压，可能时，`Recombine`选项会重新组合三角形为四边形。对于表面挤压，`Recombine`选项会重新组合四面体为三棱柱，六面体或金字塔形。
+> 
+> 请注意，从Gmsh2.0开始，区域标签不能再*Layers*命令中显示指定了，取而代之的是，和其他几何命令一样，你必须使用由挤压命令自动创建的实体标识符。例如，下面的挤压命令返回`num[0]`中最”上层”的表面的标签和`num[1]`中新体积的标签：
+> 
+> ```GMSH
+> num[] = Extrude {0,0,1} { Surface{1}; Layers{10}; };
+> ```
+> 
+> 
