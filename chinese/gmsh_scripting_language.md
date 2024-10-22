@@ -1334,4 +1334,26 @@ transform-list:
 > num[] = Extrude {0,0,1} { Surface{1}; Layers{10}; };
 > ```
 > 
+> `QuadTriNoNewVerts`和`QuadTriAddVerts`通过将与四面体体积共享的边界表面上的任何四边形细分为三角形，来连接包含四边形面的元素的结构体积和挤压体积到结构或非结构的四面体体积上。（它们对1D和2D挤压无效。）必须时，`QuadTriNoNewVerts`将与这些边界三角形接触的任何区域四面三维元素细分为金字塔形，棱柱或四面体，而且不通过添加新的节点实现。`QuadTriAddVerts`工作原理相似，但是细分接触边界三角形的3D元素通过给每个元素内部的基于节点的质心处添加一个新的节点。两个方法都会导致形成一个结构化挤压，外层元素被细分，与内层未修改的元素和三角形网格区域的边界连接。
 > 
+> 在一些特殊情况下，使用`QuadTriNoNewVerts`不添加节点时，由于特定的侧边界条件，可能会无法实现一个有效的元素细分。这种情况下，会在元素的质心处创建内部的节点，然后元素被该节点细分。使用`QuadTriNoNewVerts`创建内部节点之后，用户会被每个示例发出的信息警告；然而，网格划分仍然有效且共形。
+> 
+> `QuadTriNoNewVerts`和`QuadTriAddVerts`二者都可以结合选项`RecombLaterals`关键词使用。默认情况下，QuadTri算法会尽可能划分任意自由侧面成三角形。`RecombLaterals`尽可能强制所有自由侧面保持四边形。龙哥QuadTri区域间的侧面表面总是划分成四面体。
+> 
+> 注意，QuadTri算法将会处理所有潜在的挤压侧面的网格冲突。换句话说，QuadTri不会细分必须保持为四面体的侧面，也不会留下任何需要被细分的为四边形的侧面。用户因此可以任意结合不同种类的邻接区域和一个QuadTri网格区域；网格应该仍然有效。然而，注意QuadTri挤压的最上层的表面将总是被划分成三角形，除非它以环形环挤压回到原始源上(unless it is extruded back onto the original source in a toroidal loop)（一种使用QuadTri仍然有效的情况）。
+> 
+> `QuadTriNoNewVerts`和`QuadTriAddVerts`可以交换使用，但是`QuadTriAddVerts`总是能够获取更好的元素质量。
+> 
+> 如果用户希望不修改原始结构化网格并连接结构挤压和四面体体积，用户可以围绕结构化几何体创建专用连接体积并对这些体积仅应用一个QuadTri算法。
+
+- `Extrude { { expression-list }, { expression-list }, expression } { extrude-list layers }`
+
+> 使用旋转挤压几何体和网格（参见[挤压](https://gmsh.info/doc/texinfo/gmsh.html#Extrusions)）。***layers*** 选项已经在上面定义了。使用内置几何内核角度应该严格小于Pi。使用OpenCASCADE内核角度应该严格小于2Pi。
+
+- `Extrude { { expression-list }, { expression-list }, { expression-list }, expression } { extrude-list layers }`
+
+> 使用平移和旋转结合挤压几何体和网格（参见[挤压](https://gmsh.info/doc/texinfo/gmsh.html#Extrusions)）。***layers*** 选项已经在上面定义了。使用内置几何内核角度应该严格小于Pi。使用OpenCASCADE内核角度应该严格小于2Pi。
+
+- `Extrude { Surface { expression-list }; layers < Using Index[expr]; > < Using View[expr]; > < ScaleLastLayer; > }`
+
+> 从指定表面挤出“拓扑”边界层。如果未指定视图，则使用Gouraud-shaded（平滑）法线场创建边界层实体的网格。
